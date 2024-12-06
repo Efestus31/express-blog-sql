@@ -1,0 +1,21 @@
+{
+  "name": "express-blog-routing",
+  "version": "1.0.0",
+  "description": "Esercizio\r Usando l'array dei post fornito con le relative immagini, creare un file di routing (routers/posts.js) che conterrà le rotte necessario per l'entità post.\r Tutte le risposte saranno in json.\r All'interno creare le seguenti rotte:\r / - index: ritornerà un html con una ul che stamperà la lista dei post\r /:slug - show: tramite il parametro dinamico che rappresenta lo slug del post, ritornerà un json con i dati del post\r Scrivere tutte le funzioni delle rotte nel controller dedicato\r Registrare il router dentro app.js con il prefisso posts/.\r Bonus\r * Creare inoltre un filtro in querystring per tag, che ritorna in formato json tutti i post che hanno quei tag\r * Aggiungi il metodo store per la creazione di un nuovo post",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node --watch --env-file=.env app.js",
+    "dev": "node --watch --env-file=.env app.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.1",
+    "node": "^22.11.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.7"
+  }
+}
