@@ -26,18 +26,25 @@ const index = (req, res) => {
 //(R) show metodo che restituisce un singolo oggetto presente nel db
 //tramite il suo slug
 const show = (req, res) => {
-    const post = posts.find(post => post.slug === req.params.slug)
+    const id = req.params.id
 
-    console.log(post);
-    if (!post) {
-        return res.status(404).json({
-            error: `404! Not found`
-        })
-    }
-    return res.json({
-        data: post
+
+    //prepare the sql query
+    const sql = 'SELECT * FROM posts WHERE id=?'
+
+    connection.query(sql, [id], (err, results) => {
+        if (err) return res.status(500).json({ error: err });
+
+        if (!results[0]) return res.status(404).json({ error: 'Post not found' })
+
+        const responseData = {
+            data: results[0],
+        }
+
+        res.status(200).json(responseData)
     })
 }
+
 
 //(C) create metodo che aggiunge un oggetto al db
 const store = (req, res) => {
@@ -114,39 +121,6 @@ const destroy = (req, res) => {
         return res.json({ status: 204, affectedRows: results.affectedRows })
 
     })
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // //find the post by slug
-    // const post = posts.find(post => post.slug.toLowerCase() === req.params.slug)
-
-    // //check if there is deleting the correct file 
-    // if (!post) {
-    //     return res.status(404).json({
-    //         error: `No post found with the given slug: ${req.params.slug}`
-    //     })
-    // }
-    // //remove the resource for the array
-    // const newPosts = posts.filter(post => post.slug.toLowerCase() !== req.params.slug)
-
-    // //save the js file
-    // fs.writeFileSync('./db/db.js', `module.exports = ${JSON.stringify(newPosts, null, 4)}`)
-    // //return the update posts list
-    // return res.status(200).json({
-    //     status: 200,
-    //     data: newPosts
-    // })
-
 }
 
 //export the methods
