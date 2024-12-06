@@ -4,6 +4,7 @@ const posts = require('../db/db.js')
 //method fs per leggere e modificare i file di sistema
 const fs = require('fs')
 const connection = require('../db/connection.js')
+const { error } = require('console')
 
 //(R) index metodo che restituisce tutti gli oggetti presenti nel db
 const index = (req, res) => {
@@ -97,25 +98,54 @@ const update = (req, res) => {
 //(D) delete metodo che cancella un oggetto presente nel db
 const destroy = (req, res) => {
 
-    //find the post by slug
-    const post = posts.find(post => post.slug.toLowerCase() === req.params.slug)
+    //take the resource id from the request
+    const id = req.params.id
 
-    //check if there is deleting the correct file 
-    if (!post) {
-        return res.status(404).json({
-            error: `No post found with the given slug: ${req.params.slug}`
-        })
-    }
-    //remove the resource for the array
-    const newPosts = posts.filter(post => post.slug.toLowerCase() !== req.params.slug)
+    //prepare the sql query to delete the record from the db
+    const sql = 'DELETE FROM posts WHERE id=?'
 
-    //save the js file
-    fs.writeFileSync('./db/db.js', `module.exports = ${JSON.stringify(newPosts, null, 4)}`)
-    //return the update posts list
-    return res.status(200).json({
-        status: 200,
-        data: newPosts
+    //perform the prepared statement query
+    connection.query(sql, [id], (err, results) => {
+        console.log(err, results);
+        if (err) return res.status(500).json({ error: err })
+        //handle a 404 error if the record is not found
+        if (results.affectedRows === 0) return res.status(404).json({ error: `404! no post found with this ${id}` })
+
+        return res.json({ status: 204, affectedRows: results.affectedRows })
+
     })
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // //find the post by slug
+    // const post = posts.find(post => post.slug.toLowerCase() === req.params.slug)
+
+    // //check if there is deleting the correct file 
+    // if (!post) {
+    //     return res.status(404).json({
+    //         error: `No post found with the given slug: ${req.params.slug}`
+    //     })
+    // }
+    // //remove the resource for the array
+    // const newPosts = posts.filter(post => post.slug.toLowerCase() !== req.params.slug)
+
+    // //save the js file
+    // fs.writeFileSync('./db/db.js', `module.exports = ${JSON.stringify(newPosts, null, 4)}`)
+    // //return the update posts list
+    // return res.status(200).json({
+    //     status: 200,
+    //     data: newPosts
+    // })
 
 }
 

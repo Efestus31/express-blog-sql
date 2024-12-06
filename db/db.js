@@ -56,5 +56,11 @@ module.exports = [
             "Ricette vegetariane",
             "Ricette al forno"
         ]
+    },
+    {
+        "title": "Crostata di frutta",
+        "slug": "crostata-di-frutta",
+        "content": "La crostata di frutta è un classico della pasticceria italiana, amata per la sua semplicità e la sua bontà. La base di pasta frolla croccante, arricchita da una crema pasticcera vellutata e decorata con una varietà di frutta fresca di stagione, rende questa torta perfetta per ogni occasione, dalle feste ai semplici pranzi in famiglia. La combinazione di frutta, come fragole, kiwi, pesche e uva, crea un'esplosione di colori e sapori che conquisterà tutti. La crostata di frutta è un dolce che non passa mai di moda e che saprà rendere speciale ogni momento della giornata.",
+        "image": "crostata_di_frutta.avif"
     }
 ]
