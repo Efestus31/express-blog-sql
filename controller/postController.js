@@ -3,39 +3,45 @@ const posts = require('../db/db.js')
 //integrazione per bonus
 //method fs per leggere e modificare i file di sistema
 const fs = require('fs')
+const connection = require('../db/connection.js')
 
 //(R) index metodo che restituisce tutti gli oggetti presenti nel db
 const index = (req, res) => {
 
-    console.log(posts);
-    
-    //send response with the 200 status
-    res.status(200).json(
-        {
-            data: posts,
-            counter: posts.length
-        })
+    const sql = 'SELECT * FROM posts'
+
+    connection.query(sql, (err, results) => {
+        if (err) return res.status(500).json({ error: err });
+
+        const responseData = {
+            data: results,
+            counter: results.length
+        }
+
+        res.status(200).json(responseData)
+    })
 }
+
 //(R) show metodo che restituisce un singolo oggetto presente nel db
 //tramite il suo slug
 const show = (req, res) => {
-     const post = posts.find(post => post.slug === req.params.slug)
+    const post = posts.find(post => post.slug === req.params.slug)
 
-     console.log(post);
-     if (!post){
+    console.log(post);
+    if (!post) {
         return res.status(404).json({
             error: `404! Not found`
         })
-     }
-     return res.json({
-        data:post
-     })
+    }
+    return res.json({
+        data: post
+    })
 }
 
 //(C) create metodo che aggiunge un oggetto al db
 const store = (req, res) => {
     //Crea un nuovo oggetto all'interno del db
-    const post ={
+    const post = {
         title: req.body.title,
         slug: req.body.slug,
         content: req.body.content,
@@ -52,7 +58,7 @@ const store = (req, res) => {
     posts.push(post)
 
     //aggiorna file db
-    fs.writeFileSync('./db/db.js',`module.exports = ${JSON.stringify(posts, null, 4)}`)
+    fs.writeFileSync('./db/db.js', `module.exports = ${JSON.stringify(posts, null, 4)}`)
 
     res.json({
         data: posts,
@@ -66,8 +72,8 @@ const update = (req, res) => {
     //find a post by slug
     const post = posts.find(post => post.slug.toLowerCase() === req.params.slug)
     //check if the user is updating the correct post
-    if(!post){
-        return res.status(404).json({ error: `No post found with this slug: ${req.params.slug}!`})
+    if (!post) {
+        return res.status(404).json({ error: `No post found with this slug: ${req.params.slug}!` })
     }
     //update the post object
     post.title = req.body.title
@@ -77,25 +83,25 @@ const update = (req, res) => {
     post.tags = req.body.tags
 
     //controlla se ci sono campi vuoti
-    if(!post.title || !post.slug || !post.content || !post.image || !post.tags){ 
+    if (!post.title || !post.slug || !post.content || !post.image || !post.tags) {
         return res.status(400).json({ error: "Missing required fields" })
-        }
+    }
     //update the js file
     fs.writeFileSync('./db/db.js', `module.exports = ${JSON.stringify(posts, null, 4)}`)
 
 
     //return the update posts list
-    return res.status(201).json({status: 201, data: posts})
-} 
+    return res.status(201).json({ status: 201, data: posts })
+}
 
 //(D) delete metodo che cancella un oggetto presente nel db
-const destroy =(req, res) => {
+const destroy = (req, res) => {
 
     //find the post by slug
     const post = posts.find(post => post.slug.toLowerCase() === req.params.slug)
 
     //check if there is deleting the correct file 
-    if(!post){
+    if (!post) {
         return res.status(404).json({
             error: `No post found with the given slug: ${req.params.slug}`
         })
